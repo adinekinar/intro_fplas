@@ -1,0 +1,132 @@
+{
+  "1": [
+    {
+      "page": 1,
+      "total": 3,
+      "items": [
+        {
+          "type": "title",
+          "text": "Everything in Flutter is a \u2018Widget\u2019"
+        },
+        {
+          "type": "paragraph",
+          "text": "Everything you see in Flutter (buttons, text, images) is a widget. Widgets define both appearance (UI) and behavior (logic)."
+        },
+        {
+          "type": "subtitle",
+          "text": "Why Does Flutter Use Widget?"
+        },
+        {
+          "type": "bullet",
+          "items": [
+            {
+              "label": "Declarative Approach",
+              "desc": "You define what the UI should look like, and Flutter renders it."
+            },
+            {
+              "label": "Integrated UI & Logic",
+              "desc": "Less boilerplate code, easier maintenance."
+            },
+            {
+              "label": "Simplified State Management",
+              "desc": "Choose between stateless and stateful widgets as needed."
+            },
+            {
+              "label": "Consistent Design",
+              "desc": "Flutter ensures UI uniformity across platforms."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": 2,
+      "total": 3,
+      "items": [
+        {
+          "type": "title",
+          "text": "Example of Simplicity"
+        },
+        {
+          "type": "code",
+          "text": "ElevatedButton(\n  child: Text('Click Me'), // The UI part\n  onPressed: () {\n    // The logic part\n    print('Button clicked!');\n  },\n);"
+        },
+        {
+          "type": "subtitle",
+          "text": "Declarative UI in Flutter"
+        },
+        {
+          "type": "bullet",
+          "items": [
+            {
+              "desc": "Instead of manually updating UI, you define the final UI state."
+            },
+            {
+              "desc": "Flutter automatically renders changes when state updates."
+            },
+            {
+              "desc": "This allows focusing on \u201cwhat the UI should look like\u201d instead of \u201chow to update it\u201d."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": 3,
+      "total": 3,
+      "items": [
+        {
+          "type": "title",
+          "text": "How Does Flutter Differ from Older UI Frameworks?"
+        },
+        {
+          "type": "subtitle",
+          "text": "Older UI Frameworks: How They Work"
+        },
+        {
+          "type": "paragraph",
+          "text": "UI and Logic are separated into different files (e.g., XML for UI, Java/Kotlin for logic).  Developers need to constantly switch between files. Also, UI updates require modifying multiple places."
+        },
+        {
+          "type": "paragraph",
+          "text": "Define button in XML :"
+        },
+        {
+          "type": "code",
+          "text": "<Button android:text='Click me' />"
+        },
+        {
+          "type": "paragraph",
+          "text": "Add behavior in button use Java code :"
+        },
+        {
+          "type": "code",
+          "text": "Button myButton = findViewById(R.id.myButton);\nmyButton.setOnClickListener(new View.OnClickListener() {\n     public void onClick(View v) {\n         // Do something here\n     }\n});"
+        },
+        {
+          "type": "subtitle",
+          "text": "How Flutter Improves This"
+        },
+        {
+          "type": "bullet",
+          "items": [
+            {
+              "desc": "UI and logic are combined in one place using widgets."
+            },
+            {
+              "desc": "Easier to see and modify UI and behavior together."
+            },
+            {
+              "label": "Faster development & cleaner code",
+              "desc": "No need to manage separate UI files."
+            },
+            {
+              "desc": "Single widget contains both UI and logic."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "flutter_navigation": []
+}
