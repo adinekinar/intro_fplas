@@ -7,7 +7,7 @@ final List<Map<String, dynamic>> courseList = [
     'status': 'Not Started Yet',
     'subStatus': '',
     'iconColor': Colors.teal,
-    'path': 'introduction_to_widget',
+    'path': '1',
     'pageIndex': 0,
   },
   {

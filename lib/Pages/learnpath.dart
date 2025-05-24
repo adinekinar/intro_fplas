@@ -92,6 +92,7 @@ class _LearningPathPageState extends State<LearningPathPage> {
 
             ...questionItems.map((q) => SelectAnswerBox(
               key: ValueKey(q['question_id']),
+              pathId: widget.pathId,
               questionId: q['question_id'],
               question: q['question'],
               options: List<String>.from(q['options']),

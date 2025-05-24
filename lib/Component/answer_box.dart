@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
+import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 
 class SelectAnswerBox extends StatefulWidget {
+  final String pathId;
   final int questionId;
   final String question;
   final List<String> options;
@@ -11,6 +14,7 @@ class SelectAnswerBox extends StatefulWidget {
 
   const SelectAnswerBox({
     Key? key,
+    required this.pathId,
     required this.questionId,
     required this.question,
     required this.options,
@@ -25,8 +29,25 @@ class SelectAnswerBox extends StatefulWidget {
 class _SelectAnswerBoxState extends State<SelectAnswerBox> {
   String? selected;
   bool? isCorrect;
+  final userId = 'userId';
+
   String hashAnswer(String text) {
     return sha256.convert(utf8.encode(text.trim().toLowerCase())).toString();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final box = Hive.box('answers');
+    final key = "${widget.pathId}_${widget.questionId}_$userId";
+    final saved = box.get(key);
+
+    if (saved != null) {
+      selected = saved['answer'];
+      isCorrect = hashAnswer(selected!) == widget.correctAnswerHash;
+      final time = saved['timeStamp'];
+      print("Jawaban sebelumnya: $selected pada $time");
+    }
   }
 
   @override
@@ -64,6 +85,7 @@ class _SelectAnswerBoxState extends State<SelectAnswerBox> {
 
   void _showOptions() async {
     final shuffled = List<String>.from(widget.options)..shuffle();
+
     final result = await showModalBottomSheet<String>(
       context: context,
       builder: (_) => Container(
@@ -99,6 +121,15 @@ class _SelectAnswerBoxState extends State<SelectAnswerBox> {
         selected = result;
         isCorrect = correct;
       });
+
+      final box = Hive.box('answers');
+      final key = "${widget.pathId}_${widget.questionId}_$userId";
+      final formattedTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+      box.put(key, {
+        "answer": selected,
+        "timeStamp": formattedTime,
+      });
+
       widget.onAnswered?.call(result, correct);
     }
   }
