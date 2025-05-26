@@ -31,10 +31,6 @@ class _SelectAnswerBoxState extends State<SelectAnswerBox> {
   bool? isCorrect;
   final userId = 'userId';
 
-  String hashAnswer(String text) {
-    return sha256.convert(utf8.encode(text.trim().toLowerCase())).toString();
-  }
-
   @override
   void initState() {
     super.initState();
@@ -60,7 +56,7 @@ class _SelectAnswerBoxState extends State<SelectAnswerBox> {
         Text("${widget.questionId.toString()}. ${widget.question}", style: TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         GestureDetector(
-          onTap: (selected != null && isCorrect == true) ? null : _showOptions,
+          onTap: _showOptions,
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.all(12),
@@ -84,6 +80,20 @@ class _SelectAnswerBoxState extends State<SelectAnswerBox> {
   }
 
   void _showOptions() async {
+    if (selected != null && isCorrect == true) {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text("Retry Answer?"),
+          content: Text("This answer is already correct. Do you want to select a new answer?"),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context, false), child: Text("Cancel")),
+            TextButton(onPressed: () => Navigator.pop(context, true), child: Text("Retry")),
+          ],
+        ),
+      );
+      if (confirm != true) return;
+    }
     final shuffled = List<String>.from(widget.options)..shuffle();
 
     final result = await showModalBottomSheet<String>(
@@ -133,4 +143,10 @@ class _SelectAnswerBoxState extends State<SelectAnswerBox> {
       widget.onAnswered?.call(result, correct);
     }
   }
+}
+
+String hashAnswer(String answer) {
+  const pepper = "fplas2024introductory";
+  final input = "$pepper:${answer.trim().toLowerCase()}";
+  return sha256.convert(utf8.encode(input)).toString();
 }

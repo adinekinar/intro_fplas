@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:intro_fplas/Pages/homepage.dart';
 
 import '../Back/learning_loader.dart';
@@ -16,6 +17,7 @@ class LearningPathPage extends StatefulWidget {
 
 class _LearningPathPageState extends State<LearningPathPage> {
   late int currentIndex;
+  late ScrollController _scrollController;
   late List<Map<String, dynamic>> pages = [];
   Map<String, List<Map<String, dynamic>>>? questionsMap;
   List<Map<String, dynamic>> questionItems = [];
@@ -27,6 +29,7 @@ class _LearningPathPageState extends State<LearningPathPage> {
     currentIndex = widget.pageIndex;
     pages = [];
     loadPageData();
+    _scrollController = ScrollController();
   }
 
   Future<void> loadPageData() async {
@@ -51,8 +54,15 @@ class _LearningPathPageState extends State<LearningPathPage> {
     });
   }
 
-  bool get allAnswered =>
-      questionItems.every((q) => answerStatus[q['question_id']] == true);
+  bool get allAnswered {
+    final box = Hive.box('answers');
+    final userId = Hive.box('userBox').get('userId') ?? 'guest';
+
+    return questionItems.every((q) {
+      final key = "${widget.pathId}_${q['question_id']}_$userId";
+      return box.get(key) != null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,23 +119,22 @@ class _LearningPathPageState extends State<LearningPathPage> {
             Align(
               alignment: Alignment.centerRight,
               child: ElevatedButton(
-                onPressed: currentIndex < pages.length - 1
-                    ? (allAnswered
+                onPressed: allAnswered
                     ? () {
-                  setState(() {
-                    currentIndex++;
-                  });
-                  loadPageData();
+                  if (currentIndex < pages.length - 1) {
+                    setState(() {
+                      currentIndex++;
+                    });
+                    loadPageData();
+                    _scrollController.jumpTo(0);
+                  } else {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => Homepage()),
+                    );
+                  }
                 }
-                    : null)
-                    : (allAnswered
-                    ? () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => Homepage()),
-                  );
-                }
-                    : null),
+                    : null,
                 child: Text((currentIndex < pages.length - 1) ? "Next →" : "Top"),
               ),
             ),
