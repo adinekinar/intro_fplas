@@ -21,7 +21,7 @@ class _LearningPathPageState extends State<LearningPathPage> {
   late List<Map<String, dynamic>> pages = [];
   Map<String, List<Map<String, dynamic>>>? questionsMap;
   List<Map<String, dynamic>> questionItems = [];
-  Map<int, bool> answerStatus = {};
+
 
   @override
   void initState() {
@@ -55,8 +55,11 @@ class _LearningPathPageState extends State<LearningPathPage> {
   }
 
   bool get allAnswered {
+    if(questionItems.isEmpty) return false;
+
     final box = Hive.box('answers');
-    final userId = Hive.box('userBox').get('userId') ?? 'guest';
+    const userId = 'user123';
+    //final userId = Hive.box('userBox').get('userId') ?? 'guest';
 
     return questionItems.every((q) {
       final key = "${widget.pathId}_${q['question_id']}_$userId";
@@ -92,6 +95,7 @@ class _LearningPathPageState extends State<LearningPathPage> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(
+          controller: _scrollController,
           children: [
             Text("${currentPage['page']} of ${currentPage['total']}"),
             const SizedBox(height: 16),
@@ -108,9 +112,7 @@ class _LearningPathPageState extends State<LearningPathPage> {
               options: List<String>.from(q['options']),
               correctAnswerHash: q['answerHash'],
               onAnswered: (selected, isCorrect) {
-                setState(() {
-                  answerStatus[q['question_id']] = true;
-                });
+                setState(() {});
               },
             )).toList(),
 
@@ -119,22 +121,21 @@ class _LearningPathPageState extends State<LearningPathPage> {
             Align(
               alignment: Alignment.centerRight,
               child: ElevatedButton(
-                onPressed: allAnswered
-                    ? () {
+                onPressed: allAnswered ? () {
                   if (currentIndex < pages.length - 1) {
                     setState(() {
                       currentIndex++;
                     });
                     loadPageData();
-                    _scrollController.jumpTo(0);
+                    if(_scrollController.hasClients){
+                    _scrollController.jumpTo(0);}
                   } else {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (_) => Homepage()),
                     );
                   }
-                }
-                    : null,
+                } : null,
                 child: Text((currentIndex < pages.length - 1) ? "Next →" : "Top"),
               ),
             ),
